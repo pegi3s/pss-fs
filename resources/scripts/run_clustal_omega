@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# align sequences using clustal_omega
+# [parameters] file renamed_seqs_dir aligned_seqs_dir workingpath
+
+clustalo --force -i $4/$2/$1 -o $4/$3/$1

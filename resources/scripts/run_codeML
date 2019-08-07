@@ -1,0 +1,43 @@
+#!/bin/sh
+
+#run codeML
+# [parameters] file 2 codeML_results_dir codeML_config_files_dir aligned_seqs_dir tree_dir workingpath
+
+#preparing codeML control file
+
+echo "seqfile = "$7"/"$5"/"$1 > $7/$3/$4/$1
+echo "treefile = "$7"/"$6.codeML"/"$1.tre >> $7/$3/$4/$1
+echo "outfile = "$7"/"$3"/"$1.codeml.out >> $7/$3/$4/$1
+
+echo "noisy = 3" >> $7/$3/$4/$1
+echo "verbose = 0" >> $7/$3/$4/$1
+echo "runmode = 0" >> $7/$3/$4/$1
+
+echo "seqtype = 1" >> $7/$3/$4/$1
+echo "CodonFreq = 2" >> $7/$3/$4/$1
+echo "clock = 0" >> $7/$3/$4/$1
+echo "aaDist = 0" >> $7/$3/$4/$1
+echo "model = 0" >> $7/$3/$4/$1
+
+echo "NSsites = "$2 >> $7/$3/$4/$1
+echo "icode = 0" >> $7/$3/$4/$1
+echo "Mgene = 0" >> $7/$3/$4/$1
+
+echo "fix_kappa = 0" >> $7/$3/$4/$1
+echo "kappa = .3" >> $7/$3/$4/$1
+echo "fix_omega = 0" >> $7/$3/$4/$1
+echo "omega = 1.3" >> $7/$3/$4/$1
+echo "ncatG = 10" >> $7/$3/$4/$1
+
+echo "getSE = 0" >> $7/$3/$4/$1
+echo "RateAncestor = 0" >> $7/$3/$4/$1
+
+echo "Small_Diff = .45e-6" >> $7/$3/$4/$1
+echo "cleandata = 1" >> $7/$3/$4/$1
+echo "fix_blength = 0" >> $7/$3/$4/$1
+
+#running codeML
+
+codeml $7/$3/$4/$1
+
+

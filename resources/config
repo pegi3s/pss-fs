@@ -1,0 +1,30 @@
+#!/bin/sh
+
+#FASTA files to be processed must not have extra line breaks at the end
+
+workingpath=/data
+
+#rename_headers module
+renamed_seqs_dir=renamed_seqs
+dir_with_seqs=input
+
+#run_clustal_omega module
+aligned_seqs_dir=ali
+
+#run_fasttree module
+tree_dir=tree
+
+#prepare_FUBAR_files module
+FUBAR_files_dir=FUBAR_files
+ali_ext=ali
+
+#run_FUBAR module
+FUBAR_config_files_dir=config_files
+FUBAR_results_dir=FUBAR_results
+
+#run_codeML module
+codeML_results_dir=codeML_results
+codeML_config_files_dir=config_files
+
+
+

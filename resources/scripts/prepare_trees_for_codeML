@@ -1,0 +1,15 @@
+#!/bin/sh
+
+#prepare trees for codeML
+# [parameters] file tree_dir workingpath
+
+cp -r $3/$2/$1.tre $3/$2.codeML/$1
+cd $3/$2.codeML
+sed -i "s/:/\n:/g" $1
+sed -i "s/,/\n,/g" $1
+sed -i "/:/ s/.*).*/)/g" $1
+sed -i "/:/d" $1
+tr "\n" " " < $1 > $1.1
+sed -i "s/ //g" $1.1
+sed "s/)$/);/" $1.1 > $1.tre
+touch $1.1 $1 && rm $1.1 $1

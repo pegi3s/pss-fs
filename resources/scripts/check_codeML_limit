@@ -1,0 +1,37 @@
+#!/bin/sh
+
+#check for codeML 90000 limit
+# [parameters] file renamed_seqs_dir dir_with_seqs aligned_seqs_dir treedir workingpath
+
+limit=270000 # must be a multiple of 3. You can change it for testing purposes but should be 90000
+
+TEMP=$(mktemp -d  /tmp/codeMLsize_$1_.XXXXXXXX)
+
+touch $6/codeML_random_list
+grep -v '>' $6/$4/$1 > $TEMP/$1
+tr "\n" " " < $TEMP/$1 > $TEMP/$1.count
+tr "\r" " " < $TEMP/$1.count > $TEMP/$1
+sed -i 's/ //g' $TEMP/$1
+tl="$(wc -c < $TEMP/"$1")"
+tn="$(grep -c '>' $6/$4/$1)"
+rt=$(echo "$tl / $tn" | bc)
+ # with an estimated frequency of 1 in 1000 the alignment of a subset of sequences can be longer than the alignment of the full set thus we remove one sequence from the maximum allowed
+tna=$(echo "($limit / $rt) -1" | bc)
+echo $limit $tl $tn $rt $tna
+if [ $tl -gt $limit ]
+	then
+	echo $1 >> $6/codeML_random_list
+	mv $6/$2/$1 $6/$2/$1.original
+	mv $6/$4/$1 $6/$4/$1.original
+	mv $6/$5/$1.tre $6/$5/$1.tre.original
+	grep -v '>' $6/$3/$1 > $TEMP/$1.mod
+	shuf -n $tna $TEMP/$1.mod > $TEMP/$1.mod.shu
+		while read sequence
+		do
+		count=$((count+1))
+		echo ">R"$count >>  $6/$2/$1
+		echo $sequence >> $6/$2/$1
+		done < $TEMP/$1.mod.shu
+fi
+
+rm -r $TEMP

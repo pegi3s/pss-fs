@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pipeline xmlns="http://www.sing-group.org/compi/pipeline-1.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<version>1.0.0</version>
+
+	<params>
+		<param name="working_dir" shortName="w" global="true" defaultValue="/working_dir">Path of the working directory.</param>
+		<param name="input_dir" shortName="id" global="true" defaultValue="input">Name of the input directory (under working_dir).</param>
+		<param name="logs_dir" shortName="ld" global="true" defaultValue="logs">Name of the logs directory (under working_dir).</param>
+		<param name="scripts_dir" shortName="sd" global="true" defaultValue="/opt/Fast_Screen/">Path of the directory containing the pipeline scripts.</param>
+		<flag name="skip_code_ml" shortName="scm" global="true">If this flag is present, then the CodeML execution is skipped.</flag>
+	</params>
+
+	<tasks>
+		<task id="check-file-names">
+			${scripts_dir}/check ${working_dir}/${input_dir}
+		</task>
+		<foreach id="pipeline" after="check-file-names" of="file" in="${working_dir}/${input_dir}" as="input_fasta">
+			input_fasta=$(basename -- "$input_fasta")
+
+			LOGS_DIR=${working_dir}/${logs_dir}/${input_fasta}
+			mkdir -p ${LOGS_DIR}
+
+			if [ -v skip_code_ml ]; then
+				/compi run -p pipeline-single-file.xml -o --logs ${LOGS_DIR} -- --input_fasta ${input_fasta} --working_dir ${working_dir} --input_dir ${input_dir} --skip_code_ml
+			else
+				/compi run -p pipeline-single-file.xml -o --logs ${LOGS_DIR} -- --input_fasta ${input_fasta} --working_dir ${working_dir} --input_dir ${input_dir}
+			fi
+		</foreach>
+		<task id="collect-short-lists" after="pipeline">
+			touch ${working_dir}/FUBAR_short_list ${working_dir}/codeML_short_list
+			cat ${working_dir}/FUBAR_short_list ${working_dir}/codeML_short_list > ${working_dir}/short_list.tmp 
+			sort ${working_dir}/short_list.tmp > ${working_dir}/short_list
+			rm ${working_dir}/short_list.tmp
+		</task>
+	</tasks>
+
+	<metadata>
+		<task-description id="check-file-names">Runs the "check" script in order to check if the file names have less than 60 characters. If so, these files are renamed to meet this size. This must be done because file names longer than 60 characters are not accepted by CodeML.</task-description>
+		<task-description id="pipeline">Runs the compi pipeline defined in the "pipeline-single-file.xml" file for each FASTA in the input directory.</task-description>
+		<task-description id="collect-short-lists">Collects the short lists produced by FUBAR and CodeML into the "shorst_list" file, which contains the files with evidences of positive selection.</task-description>
+	</metadata>
+</pipeline>

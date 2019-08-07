@@ -1,0 +1,16 @@
+#!/bin/sh
+
+#Prepare FUBAR input files
+# [parameters] file aligned_seqs_dir tree_dir FUBAR_files_dir workingpath 
+
+TEMP=$(mktemp -d /tmp/FUBAR_p_temp_$1_.XXXXXXXX)
+
+cp $5/$2/$1 $TEMP/temp1.$1
+echo "" >> $TEMP/temp1.$1
+cat $5/$3/$1.tre | sed 's/:/\n:/g; s/,/\n,/g; s/)/\n)/g; s/)/)\n/g' > $TEMP/temp2.$1
+sed -i '/\./d' $TEMP/temp2.$1
+tr '\n' ' ' < $TEMP/temp2.$1 > $TEMP/temp3.$1
+sed -i 's/ //g' $TEMP/temp3.$1
+cat $TEMP/temp1.$1 $TEMP/temp3.$1 > $5/$4/$1.fubar
+
+rm -r $TEMP

@@ -1,0 +1,6 @@
+#!/bin/sh
+
+#Run fasttree
+# [parameters] file aligned_seqs_dir tree_dir workingpath
+
+fasttree -nt -gtr -gamma $4/$2/$1 > $4/$3/$1.tre

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pipeline xmlns="http://www.sing-group.org/compi/pipeline-1.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<version>1.0.0</version>
+
+	<params>
+		<param name="input_dir" shortName="id">Path of the input directory.</param>
+		<param name="input_fasta" shortName="if">Name of the input FASTA file (under input_dir).</param>
+		<param name="working_dir" shortName="w" global="true">Path of the working directory.</param>
+		<param name="scripts_dir" shortName="sd" global="true" defaultValue="/opt/Fast_Screen/">Path of the directory containing the pipeline scripts.</param>
+		<flag name="skip_code_ml" shortName="scm" global="true">If this flag is present, then the CodeML execution is skipped.</flag>
+        
+        <!-- Intermediate results directories -->
+		<param name="renamed_seqs_dir" shortName="rsd" defaultValue="renamed_seqs">Name of the directory (under working_dir) to place the file with the renamed sequences.</param>
+		<param name="aligned_seqs_dir" shortName="asd" defaultValue="ali">Name of the directory (under working_dir) to place the file with the aligned sequences.</param>
+		<param name="tree_dir" shortName="td" defaultValue="tree">Name of the directory (under working_dir) to place the file with the tree.</param>
+		<param name="fubar_files_dir" shortName="fd" defaultValue="FUBAR_files">Name of the directory (under working_dir) to place the file with the FUBAR input files.</param>
+		<param name="fubar_results_dir" shortName="frd" defaultValue="FUBAR_results">Name of the directory (under working_dir) to place the file with the FUBAR results.</param>
+		<param name="fubar_config_files_dir" shortName="fcd" defaultValue="config_files">Name of the directory (under working_dir) to place the file with the FUBAR configuration.</param>
+		<param name="codeML_results_dir" shortName="crd" defaultValue="codeML_results">Name of the directory (under working_dir) to place the file with the CodeML results.</param>
+		<param name="codeML_config_files_dir" shortName="ccfd" defaultValue="config_files">Name of the directory (under working_dir) to place the file with the CodeML configuration files.</param>
+	</params>
+
+	<tasks>
+		<task id="rename-headers" params="input_dir input_fasta renamed_seqs_dir">
+			mkdir -p ${working_dir}/${renamed_seqs_dir}
+			${scripts_dir}/rename_headers ${input_fasta} ${input_dir} ${renamed_seqs_dir} ${working_dir}
+		</task>
+        
+		<task id="clustal-omega" after="rename-headers" params="input_fasta renamed_seqs_dir aligned_seqs_dir">
+			mkdir -p ${working_dir}/${aligned_seqs_dir}
+			${scripts_dir}/run_clustal_omega ${input_fasta} ${renamed_seqs_dir} ${aligned_seqs_dir} ${working_dir}
+		</task>
+
+		<task id="fastree" after="clustal-omega" params="input_fasta aligned_seqs_dir tree_dir">
+			mkdir -p ${working_dir}/${tree_dir}
+			${scripts_dir}/run_fasttree ${input_fasta} ${aligned_seqs_dir} ${tree_dir} ${working_dir}
+		</task>
+		
+		<task id="fubar-prepare" after="fastree" params="input_fasta aligned_seqs_dir tree_dir fubar_files_dir">
+			mkdir -p ${working_dir}/${fubar_files_dir}
+			${scripts_dir}/prepare_FUBAR_files ${input_fasta} ${aligned_seqs_dir} ${tree_dir} ${fubar_files_dir} ${working_dir}
+		</task>
+		
+		<task id="fubar-run" after="fubar-prepare" params="input_fasta fubar_results_dir fubar_files_dir fubar_config_files_dir">
+			mkdir -p ${working_dir}/${fubar_results_dir} ${working_dir}/${fubar_files_dir}/${fubar_config_files_dir}
+			${scripts_dir}/run_FUBAR ${input_fasta}.fubar ${fubar_files_dir} ${fubar_config_files_dir} ${fubar_results_dir} ${working_dir} 
+		</task>
+        
+		<task id="fubar-pss" after="fubar-run" params="input_fasta fubar_results_dir">
+			${scripts_dir}/check_pos_FUBAR ${input_fasta}.fubar ${fubar_results_dir} ${working_dir}
+			
+			if grep -q "PROBLEM" ${working_dir}/${fubar_results_dir}/${input_fasta}.fubar
+				then echo ${input_fasta} >> ${working_dir}/files_requiring_attention
+				sed -i "/$input_fasta/d" ${working_dir}/to_be_reevaluated_by_codeML
+			fi
+		</task>
+		
+		<!-- Run codeML if FUBAR detects no PSS and the skip_code_ml flag is not present. -->
+
+		<task id="codeml-check-limit" after="fubar-pss" 
+            if="${scripts_dir}/check_run_codeML ${input_fasta} ${working_dir} ${skip_code_ml}"
+            params="input_fasta renamed_seqs_dir input_dir aligned_seqs_dir tree_dir">
+            ${scripts_dir}/check_codeML_limit ${input_fasta} ${renamed_seqs_dir} ${input_dir} ${aligned_seqs_dir} ${tree_dir} ${working_dir}
+		</task>
+        
+		<task id="codeml-clustal-omega" after="codeml-check-limit"
+			if="${scripts_dir}/check_run_codeML ${input_fasta} ${working_dir} ${skip_code_ml}"
+			params="input_fasta renamed_seqs_dir aligned_seqs_dir">
+			${scripts_dir}/run_clustal_omega ${input_fasta} ${renamed_seqs_dir} ${aligned_seqs_dir} ${working_dir}
+		</task>
+		
+		<task id="codeml-fastree" after="codeml-clustal-omega"
+			if="${scripts_dir}/check_run_codeML ${input_fasta} ${working_dir} ${skip_code_ml}"
+			params="input_fasta aligned_seqs_dir tree_dir">
+			${scripts_dir}/run_fasttree ${input_fasta} ${aligned_seqs_dir} ${tree_dir} ${working_dir}
+		</task>
+
+		<task id="codeml-prepare" after="codeml-fastree"
+			if="${scripts_dir}/check_run_codeML ${input_fasta} ${working_dir} ${skip_code_ml}"
+			params="input_fasta input_dir tree_dir">
+			 mkdir -p ${working_dir}/${tree_dir}.codeML
+            ${scripts_dir}/prepare_trees_for_codeML ${input_fasta} ${tree_dir} ${working_dir}
+		</task>
+		
+		<task id="codeml-run" after="codeml-prepare"
+			if="${scripts_dir}/check_run_codeML ${input_fasta} ${working_dir} ${skip_code_ml}"
+			params="input_fasta aligned_seqs_dir codeML_results_dir codeML_config_files_dir tree_dir">
+			mkdir -p ${working_dir}/${codeML_results_dir} ${working_dir}/${codeML_results_dir}/${codeML_config_files_dir}
+            ${scripts_dir}/run_codeML ${input_fasta} 2 ${codeML_results_dir} ${codeML_config_files_dir} ${aligned_seqs_dir} ${tree_dir} ${working_dir}
+		</task>
+
+		<task id="codeml-pss" after="codeml-run"
+			if="${scripts_dir}/check_run_codeML ${input_fasta} ${working_dir} ${skip_code_ml}"
+			params="input_fasta aligned_seqs_dir codeML_results_dir codeML_config_files_dir tree_dir">
+			${scripts_dir}/check_pos_codeML ${input_fasta} ${codeML_results_dir} ${working_dir}
+		</task>
+	</tasks>
+</pipeline>

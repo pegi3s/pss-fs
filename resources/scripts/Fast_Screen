@@ -1,0 +1,84 @@
+#!/bin/bash
+
+func() {
+
+echo "Fast_Screen"
+
+scriptpath=/opt/Fast_Screen
+
+. /data/config
+
+#First_check_for_long_file_names
+
+
+#Rename headers
+mkdir -p $workingpath/$renamed_seqs_dir
+cd $scriptpath && ./rename_headers $1 $dir_with_seqs $renamed_seqs_dir $workingpath
+
+#Run clustalomega
+mkdir -p $workingpath/$aligned_seqs_dir
+cd $scriptpath && ./run_clustal_omega $1 $renamed_seqs_dir $aligned_seqs_dir $workingpath
+
+#Run fasttree
+mkdir -p $workingpath/$tree_dir
+cd $scriptpath && ./run_fasttree $1 $aligned_seqs_dir $tree_dir $workingpath
+
+#Prepare FUBAR files
+mkdir -p /tmp/FUBAR_p_temp $workingpath/$FUBAR_files_dir
+cd $scriptpath && ./prepare_FUBAR_files $1 $aligned_seqs_dir $tree_dir $FUBAR_files_dir $workingpath 
+
+#Run FUBAR
+mkdir -p $workingpath/$FUBAR_results_dir $workingpath/$FUBAR_files_dir/$FUBAR_config_files_dir
+cd $scriptpath && ./run_FUBAR $1.fubar $FUBAR_files_dir $FUBAR_config_files_dir $FUBAR_results_dir $workingpath 
+
+#Check for FUBAR positively selected sites
+mkdir -p /tmp/pos_FUBAR_temp
+cd $scriptpath && ./check_pos_FUBAR $1.fubar $FUBAR_results_dir $workingpath 
+
+
+if grep -q "PROBLEM" $workingpath/$FUBAR_results_dir/$1.fubar
+then echo $1 >> $workingpath/files_requiring_attention
+sed -i "/^$1$/d" $workingpath/to_be_reevaluated_by_codeML
+fi
+
+#Run codeML if FUBAR detects no PSS
+if grep -xq $1 $workingpath/to_be_reevaluated_by_codeML
+	then
+	echo "Running codeML"
+
+
+#check for codeML 90000 limit
+mkdir -p /tmp/codeMLsize
+cd $scriptpath && ./check_codeML_limit $1 $renamed_seqs_dir $dir_with_seqs $aligned_seqs_dir $tree_dir $workingpath
+
+cd $scriptpath && ./run_clustal_omega $1 $renamed_seqs_dir $aligned_seqs_dir $workingpath
+cd $scriptpath && ./run_fasttree $1 $aligned_seqs_dir $tree_dir $workingpath
+
+
+	#prepare trees for codeML
+	mkdir -p $workingpath/$tree_dir.codeML
+	cd $scriptpath && ./prepare_trees_for_codeML $1 $tree_dir $workingpath
+
+	#Run codeML model2 for files where FUBAR did not detect PSS
+	mkdir -p $workingpath/$codeML_results_dir $workingpath/$codeML_results_dir/$codeML_config_files_dir
+	cd $scriptpath && ./run_codeML $1 2 $codeML_results_dir $codeML_config_files_dir $aligned_seqs_dir $tree_dir $workingpath
+
+
+	#Checking for codeML PSS
+	mkdir -p /tmp/pos_codeML_temp
+	cd $scriptpath && ./check_pos_codeML $1 $codeML_results_dir $workingpath 
+	
+ 
+fi }
+
+export -f func
+. /data/config
+cd $workingpath/$dir_with_seqs && args=$(ls)
+parallel -j $number_of_cores func ::: $args
+
+touch /tmp/FUBAR_p_temp && rm -r /tmp/FUBAR_p_temp
+touch /tmp/pos_FUBAR_temp && rm -r /tmp/pos_FUBAR_temp
+touch /tmp/codeMLsize && rm -r /tmp/codeMLsize
+touch /tmp/pos_codeML_temp && rm -r /tmp/pos_codeML_temp
+cd $workingpath && touch FUBAR_short_list codeML_short_list && cat FUBAR_short_list codeML_short_list > short_list.tmp && sort short_list.tmp > short_list && rm short_list.tmp
+

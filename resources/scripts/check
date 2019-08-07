@@ -1,0 +1,24 @@
+#!/bin/sh
+
+#first check for long names
+# [parameters] dir_with_seqs
+
+dir_with_seqs=$1
+
+cd $dir_with_seqs
+for file in *
+do
+	short=$(echo $file | cut -c1-57)
+	
+	if [ "$short" != "$file" ]; then
+        while test -f $short
+        do
+            x=$((x+1))
+            short=$short.$x
+        done
+
+        mv $file $short
+    fi
+
+    x=0
+done

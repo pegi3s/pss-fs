@@ -1,0 +1,7 @@
+#!/bin/sh
+
+#rename headers and erase blank lines to avoid problems
+# [parameters] file dir_with_seqs renamed_seqs_dir workingpath
+
+awk '{if ($0 ~ ">") {print ">C" 1+x++} else {print $0}}' $4/$2/$1 > $4/$3/$1
+sed -i '/^$/d' $4/$3/$1
