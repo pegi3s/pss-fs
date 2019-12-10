@@ -1,5 +1,11 @@
 # FastScreen [![license](https://img.shields.io/badge/license-MIT-brightgreen)](https://github.com/pegi3s/pss-fs) [![dockerhub](https://img.shields.io/badge/hub-docker-blue)](https://github.com/pegi3s/pss-fs) [![compihub](https://img.shields.io/badge/hub-compi-blue)](https://www.sing-group.org/compihub/explore/5d5bb64f6d9e31002f3ce30a)
-> FastScreen is a [compi](https://www.sing-group.org/compi/) pipeline to identify datasets that likely show evidence for positive selection and thus should be the subject of detailed, time-consuming analyses<sup>1</sup>. A Docker image is available for this pipeline in [this Docker Hub repository](https://hub.docker.com/r/pegi3s/pss-fs).
+> **FastScreen** is a [compi](https://www.sing-group.org/compi/) pipeline to identify datasets that likely show evidence for positive selection and thus should be the subject of detailed, time-consuming analyses<sup>1</sup>. A Docker image is available for this pipeline in [this Docker Hub repository](https://hub.docker.com/r/pegi3s/pss-fs).
+
+## FastScreen repositories
+
+- [GitHub](https://github.com/pegi3s/pss-fs)
+- [DockerHub](https://hub.docker.com/r/pegi3s/pss-fs)
+- [CompiHub](https://www.sing-group.org/compihub/explore/5d5bb64f6d9e31002f3ce30a)
 
 ## Pipeline implementation
 
