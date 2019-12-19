@@ -35,14 +35,14 @@ RUN cd /opt/hyphy-2.3.14/ && \
 
 RUN apt-get install -y gcc \
     && cd /usr/local/ \
-    && wget http://abacus.gene.ucl.ac.uk/software/paml4.9h.tgz \
-    && tar -xzvf paml4.9h.tgz \
-    && rm -rf paml4.9h.tgz \
-    && cd paml4.9h/src \
+    && wget http://abacus.gene.ucl.ac.uk/software/paml4.9j.tgz \
+    && tar -xzvf paml4.9j.tgz \
+    && rm -rf paml4.9j.tgz \
+    && cd paml4.9j/src \
     && make \
     && cp baseml basemlg chi2 codeml evolver infinitesites mcmctree pamp yn00 /usr/local/bin/ \
     && cd /usr/local \
-    && rm -rf /usr/local/paml4.9h \
+    && rm -rf /usr/local/paml4.9j \
     && apt-get remove -y wget gcc make \
     && apt-get autoremove -y \
     && apt-get clean \
