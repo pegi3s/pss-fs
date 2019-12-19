@@ -7,6 +7,33 @@
 - [DockerHub](https://hub.docker.com/r/pegi3s/pss-fs)
 - [CompiHub](https://www.sing-group.org/compihub/explore/5d5bb64f6d9e31002f3ce30a)
 
+# Using the FastScreen image in Linux
+In order to use the FastScreen image, create first a directory with name `compi_fss_working_dir/input` in your local file system. `compi_fss_working_dir` is the name of the working directory of the pipeline where the output results and intermediate files will be created. The input FASTA files to be analized must be placed in the `compi_fss_working_dir/input` directory.
+
+# Test data
+The sample data is available [here](https://github.com/pegi3s/pss-fs/tree/master/resources/test-data). Download the FASTA files and put them inside the directory `compi_fss_working_dir/input` in your local file system. Please, note that the folder `input` must remain with that name as the pipeline will look for the FASTA files there.
+
+Then, you should adapt and run the following commands:
+
+```bash
+WORKING_DIR=/path/to/compi_fss_working_dir
+
+mkdir -p ${WORKING_DIR}/logs
+
+docker run -v ${WORKING_DIR}:/working_dir --rm pegi3s/pss-fs --logs /working_dir/logs
+```
+In these commands, you should replace:
+- `/path/to/compi_fss_working_dir` to the actual path in your file system.
+
+# Extra
+To re-run the pipeline in the same working directory, run the following command first in order to clean it:
+
+```bash
+sudo rm -rf ${WORKING_DIR}/ali ${WORKING_DIR}/renamed_seqs ${WORKING_DIR}/logs ${WORKING_DIR}/tree ${WORKING_DIR}/FUBAR_files ${WORKING_DIR}/FUBAR_results ${WORKING_DIR}/short_list ${WORKING_DIR}/to_be_reevaluated_by_codeML ${WORKING_DIR}/codeML_random_list ${WORKING_DIR}/codeML_results ${WORKING_DIR}/tree.codeML ${WORKING_DIR}/codeML_short_list ${WORKING_DIR}/negative_list ${WORKING_DIR}/files_requiring_attention ${WORKING_DIR}/FUBAR_short_list && mkdir -p ${WORKING_DIR}/logs
+```
+
+# For Developers
+
 ## Pipeline implementation
 
 ### File `pipeline-single-file.xml`
@@ -29,25 +56,5 @@ Appart from the `short_list` file, six other output files are produced:
 5. `negative_list`: contains the names of the files where no evidence for positive selection was found by either FUBAR or CodeML.
 6. `files_requiring_attention`: contains the names of the files that could not be processed without error (usually because they have in frame stop codons that were introduced during the nucleotide alignment step). 
 
-## Running the pipeline with sample data
-
-It is possible to test the pipeline using the sample data available [here](resources/test-data). Download the FASTA files and put them in a directory with name `compi-fss-working-dir/input` in your local file system. `compi-fss-working-dir` is the name of the working directory of the pipeline where the output results and intermediate files will be created.
-
-Then, run the following command, changing the `/path/to/compi-fss-working-dir` to the actual path in your file system.
-
-```bash
-WORKING_DIR=/path/to/compi-fss-working-dir
-
-mkdir -p ${WORKING_DIR}/logs
-
-docker run -v ${WORKING_DIR}:/working_dir --rm pegi3s/pss-fs --logs /working_dir/logs
-```
-
-To re-run the pipeline, clear the working directory with:
-
-```bash
-sudo rm -rf ${WORKING_DIR}/ali ${WORKING_DIR}/renamed_seqs ${WORKING_DIR}/logs ${WORKING_DIR}/tree ${WORKING_DIR}/FUBAR_files ${WORKING_DIR}/FUBAR_results ${WORKING_DIR}/short_list ${WORKING_DIR}/to_be_reevaluated_by_codeML ${WORKING_DIR}/codeML_random_list ${WORKING_DIR}/codeML_results ${WORKING_DIR}/tree.codeML ${WORKING_DIR}/codeML_short_list ${WORKING_DIR}/negative_list ${WORKING_DIR}/files_requiring_attention ${WORKING_DIR}/FUBAR_short_list && mkdir -p ${WORKING_DIR}/logs
-```
-
-## References
-1. H. López-Fernández; P. Duque; N. Vázquez; F. Fdez-Riverola; M. Reboiro-Jato; C.P. Vieira; J. Vieira (2019) [Inferring Positive Selection in Large Viral Datasets](https://doi.org/10.1007/978-3-030-23873-5_8). 13th International Conference on Practical Applications of Computational Biology & Bioinformatics: PACBB 2019. Ávila, Spain. 26 - June 
+# References
+1. H. López-Fernández; P. Duque; N. Vázquez; F. Fdez-Riverola; M. Reboiro-Jato; C.P. Vieira; J. Vieira (2019) [Inferring Positive Selection in Large Viral Datasets](https://doi.org/10.1007/978-3-030-23873-5_8). 13th International Conference on Practical Applications of Computational Biology & Bioinformatics: PACBB 2019. Ávila, Spain. 26 - June
