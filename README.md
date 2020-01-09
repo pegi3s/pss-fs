@@ -56,5 +56,9 @@ Appart from the `short_list` file, six other output files are produced:
 5. `negative_list`: contains the names of the files where no evidence for positive selection was found by either FUBAR or CodeML.
 6. `files_requiring_attention`: contains the names of the files that could not be processed without error (usually because they have in frame stop codons that were introduced during the nucleotide alignment step). 
 
+## Building the Docker image
+
+To build the Docker image, [`compi-dk`](https://www.sing-group.org/compi/#downloads) is required. Once you have it installed, simply run `compi-dk build` from the project directory to build the Docker image. The image will be created with the name specified in the `compi.project` file (i.e. `pegi3s/pss-fs:latest`). This file also specifies the version of compi that goes into the Docker image.
+
 # References
 1. H. López-Fernández; P. Duque; N. Vázquez; F. Fdez-Riverola; M. Reboiro-Jato; C.P. Vieira; J. Vieira (2019) [Inferring Positive Selection in Large Viral Datasets](https://doi.org/10.1007/978-3-030-23873-5_8). 13th International Conference on Practical Applications of Computational Biology & Bioinformatics: PACBB 2019. Ávila, Spain. 26 - June
