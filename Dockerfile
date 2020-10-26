@@ -65,5 +65,4 @@ COPY ./resources/config /home/config
 
 # ADD PIPELINE
 ADD pipeline.xml /pipeline.xml
-ADD pipeline-single-file.xml /pipeline-single-file.xml
 ENTRYPOINT ["/compi", "run",  "-p", "/pipeline.xml"]

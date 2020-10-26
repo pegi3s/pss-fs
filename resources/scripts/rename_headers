@@ -1,7 +1,30 @@
 #!/bin/sh
 
 #rename headers and erase blank lines to avoid problems
-# [parameters] file dir_with_seqs renamed_seqs_dir workingpath
+# [parameters] [1] file [2] dir_with_seqs [3] renamed_seqs_dir [4] workingpath [5] renamed_seqs_maps_dir
 
-awk '{if ($0 ~ ">") {print ">C" 1+x++} else {print $0}}' $4/$2/$1 > $4/$3/$1
+cat $4/$2/$1 | awk '
+  BEGIN {
+    count = 1
+  }
+  {
+  if (match($0,"^>")){
+    printf ">C%s\n", count, $0
+    count = count +1
+  } else {
+    print $0
+  }
+}' > $4/$3/$1
+
+cat $4/$2/$1 | awk '
+  BEGIN {
+    count = 1
+  }
+  {
+  if (match($0,"^>")){
+    printf ">C%s\t%s\n", count, $0
+    count = count +1
+  }
+}' > $4/$5/$1
+
 sed -i '/^$/d' $4/$3/$1

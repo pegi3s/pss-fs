@@ -36,17 +36,11 @@ sudo rm -rf ${WORKING_DIR}/ali ${WORKING_DIR}/renamed_seqs ${WORKING_DIR}/logs $
 
 ## Pipeline implementation
 
-### File `pipeline-single-file.xml`
-
-The FastScreen compi pipeline is defined in the file `pipeline-single-file.xml`, which is used to analyze one input FASTA file (`<input_dir>/<input_fasta>`) and produce the results at the specified `working_dir`. 
-
-First, ClustalOmega and FastTree are executed in order to look for evidence for positive selection with FUBAR. If evidence for positive selection is found, then the name of the file is added to the `short_list` file. If it is not found, then the file is analized using CodeML. The tasks related with the execution of CodeML can be skipped by passing the parameter `skip_code_ml`.
+The `pipeline.xml` analyzes each FASTA file in the `input_dir` directory in parallell (using [binded foreachs](https://www.sing-group.org/compi/docs/writing_pipelines.html#iteration-dependencies-between-foreach-tasks)) and produces the results at the specified `working_dir`. For each input FASTA file, ClustalOmega and FastTree are executed in first place in order to look for evidence for positive selection with FUBAR. If evidence for positive selection is found, then the name of the file is added to the `short_list` file. If it is not found, then the file is analized using CodeML. The tasks related with the execution of CodeML can be skipped by passing the parameter `skip_code_ml`.
 
 Please, note that there is a limit around 90 000 for the product of the number of sequences times the number of ungapped codons that CodeML can handle<sup>1</sup>. When this limit is exceeded a random sample is taken from the initial dataset (in the `codeml-check-limit` task). In these cases, as many as possible sequences minus one are used.
 
-### File `pipeline.xml`
-
-Then, a second compi pipeline is defined in the `pipeline.xml` file in order to perform the analysis of several FASTA files in parallel. This pipeline simply runs the `pipeline-single-file.xml` for every FASTA file in the `input_dir` directory and produces the results at the specified `working_dir`. The main output is the `short_list` file, which contains the names of the FASTA files where evidence for positive selection.
+The main output is the `short_list` file, which contains the names of the FASTA files where evidence for positive selection.
 
 Appart from the `short_list` file, six other output files are produced:
 1. `FUBAR_short_list`: contains the names of the files where evidence for positive selection has been found by FUBAR.
@@ -54,7 +48,7 @@ Appart from the `short_list` file, six other output files are produced:
 3. `codeML_random_list`: contains the names of the files from which a random sequence sample was taken because they were too large to be analysed by CodeML.
 4. `codeML_short_list`: contains the names of the files where PSS were detected by CodeML model M2a.
 5. `negative_list`: contains the names of the files where no evidence for positive selection was found by either FUBAR or CodeML.
-6. `files_requiring_attention`: contains the names of the files that could not be processed without error (usually because they have in frame stop codons that were introduced during the nucleotide alignment step). 
+6. `files_requiring_attention`: contains the names of the files that could not be processed without error (usually because they have in frame stop codons that were introduced during the nucleotide alignment step).
 
 ## Building the Docker image
 

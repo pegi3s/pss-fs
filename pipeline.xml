@@ -2,7 +2,7 @@
 
 <pipeline xmlns="http://www.sing-group.org/compi/pipeline-1.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<version>1.2.0</version>
+	<version>1.3.0</version>
 
 	<params>
 		<param name="working_dir" shortName="w" global="true" defaultValue="/working_dir">Path of the working directory.</param>
@@ -12,6 +12,7 @@
         
         <!-- Intermediate results directories -->
 		<param name="renamed_seqs_dir" shortName="rsd" defaultValue="renamed_seqs">Name of the directory (under working_dir) to place the file with the renamed sequences.</param>
+		<param name="renamed_seqs_maps_dir" shortName="rsmd" defaultValue="renamed_seqs_mappings">Name of the directory (under working_dir) to place the file with the mappings to produce the renamed sequences.</param>
 		<param name="aligned_seqs_dir" shortName="asd" defaultValue="ali">Name of the directory (under working_dir) to place the file with the aligned sequences.</param>
 		<param name="tree_dir" shortName="td" defaultValue="tree">Name of the directory (under working_dir) to place the file with the tree.</param>
 		<param name="fubar_files_dir" shortName="fd" defaultValue="FUBAR_files">Name of the directory (under working_dir) to place the file with the FUBAR input files.</param>
@@ -27,10 +28,11 @@
 		</task>
 
 		<foreach id="rename-headers" after="check-file-names"
-			params="input_dir renamed_seqs_dir"
+			params="input_dir renamed_seqs_dir renamed_seqs_maps_dir"
 			of="command" in="ls ${working_dir}/${input_dir}" as="input_fasta">
 			mkdir -p ${working_dir}/${renamed_seqs_dir}
-			${scripts_dir}/rename_headers ${input_fasta} ${input_dir} ${renamed_seqs_dir} ${working_dir}
+			mkdir -p ${working_dir}/${renamed_seqs_maps_dir}
+			${scripts_dir}/rename_headers ${input_fasta} ${input_dir} ${renamed_seqs_dir} ${working_dir} ${renamed_seqs_maps_dir}
 		</foreach>
         
 		<foreach id="clustal-omega" after="*rename-headers"
