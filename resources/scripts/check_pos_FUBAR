@@ -6,13 +6,22 @@
 
 TEMP=$(mktemp -d /tmp/pos_FUBAR_temp_$1_.XXXXXXXX)
 
-touch $3/FUBAR_short_list $3/to_be_reevaluated_by_codeML
+touch $3/FUBAR_short_list $3/to_be_reevaluated_by_codeML $3/files_requiring_attention
 cat $3/$2/$1 | grep 'Pos. posterior' > $TEMP/$1.pos
+
+FILENAME=$(echo $1 | sed "s%.fubar%%g")
+
 if [ -s $TEMP/$1.pos ]
-	then 
-	echo $1 >> $3/FUBAR_short_list && sed -i "s%.fubar%%g" $3/FUBAR_short_list
+then 
+	echo ${FILENAME} >> $3/FUBAR_short_list
 else
-	echo $1 >> $3/to_be_reevaluated_by_codeML && sed -i "s%.fubar%%g" $3/to_be_reevaluated_by_codeML
+	ERRORS=$(grep -ie "PROBLEM" $3/$2/$1)
+	if [ ! -z "${ERRORS}" ]
+	then
+		echo ${FILENAME} >> $3/files_requiring_attention
+	else
+		echo ${FILENAME} >> $3/to_be_reevaluated_by_codeML
+	fi
 fi
 
 rm -r $TEMP

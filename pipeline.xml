@@ -2,7 +2,7 @@
 
 <pipeline xmlns="http://www.sing-group.org/compi/pipeline-1.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<version>1.4.0</version>
+	<version>1.5.0-SNAPSHOT</version>
 
 	<params>
 		<param name="working_dir" shortName="w" global="true" defaultValue="/working_dir">Path of the working directory.</param>
@@ -67,13 +67,8 @@
 			params="fubar_results_dir"
 			of="command" in="ls ${working_dir}/${input_dir}" as="input_fasta">
 			${scripts_dir}/check_pos_FUBAR ${input_fasta}.fubar ${fubar_results_dir} ${working_dir}
-			
-			if grep -q "PROBLEM" ${working_dir}/${fubar_results_dir}/${input_fasta}.fubar
-				then echo ${input_fasta} >> ${working_dir}/files_requiring_attention
-				sed -i "/$input_fasta/d" ${working_dir}/to_be_reevaluated_by_codeML
-			fi
 		</foreach>
-		
+
 		<!-- Run codeML if FUBAR detects no PSS and the skip_code_ml flag is not present. -->
 
 		<foreach id="codeml-check-limit" after="*fubar-pss" 
