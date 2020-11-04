@@ -10,6 +10,8 @@
 # Using the FastScreen image in Linux
 In order to use the FastScreen image, create first a directory with name `compi_fss_working_dir/input` in your local file system. `compi_fss_working_dir` is the name of the working directory of the pipeline where the output results and intermediate files will be created. The input FASTA files to be analized must be placed in the `compi_fss_working_dir/input` directory.
 
+Note that FastScreen requires FASTA files to have at least 4 sequences, otherwise the pipeline will not start its execution and a list with the files having less than 4 sequences is created.
+
 # Test data
 The sample data is available [here](https://github.com/pegi3s/pss-fs/tree/master/resources/test-data). Download the FASTA files and put them inside the directory `compi_fss_working_dir/input` in your local file system. Please, note that the folder `input` must remain with that name as the pipeline will look for the FASTA files there.
 
@@ -17,8 +19,6 @@ Then, you should adapt and run the following commands:
 
 ```bash
 WORKING_DIR=/path/to/compi_fss_working_dir
-
-mkdir -p ${WORKING_DIR}/logs
 
 docker run -v ${WORKING_DIR}:/working_dir --rm pegi3s/pss-fs --logs /working_dir/logs
 ```
@@ -29,7 +29,7 @@ In these commands, you should replace:
 To re-run the pipeline in the same working directory, run the following command first in order to clean it:
 
 ```bash
-sudo rm -rf ${WORKING_DIR}/ali ${WORKING_DIR}/renamed_seqs ${WORKING_DIR}/logs ${WORKING_DIR}/tree ${WORKING_DIR}/FUBAR_files ${WORKING_DIR}/FUBAR_results ${WORKING_DIR}/short_list ${WORKING_DIR}/to_be_reevaluated_by_codeML ${WORKING_DIR}/codeML_random_list ${WORKING_DIR}/codeML_results ${WORKING_DIR}/tree.codeML ${WORKING_DIR}/codeML_short_list ${WORKING_DIR}/negative_list ${WORKING_DIR}/files_requiring_attention ${WORKING_DIR}/FUBAR_short_list && mkdir -p ${WORKING_DIR}/logs
+sudo rm -rf ${WORKING_DIR}/ali ${WORKING_DIR}/renamed_seqs ${WORKING_DIR}/logs ${WORKING_DIR}/tree ${WORKING_DIR}/FUBAR_files ${WORKING_DIR}/FUBAR_results ${WORKING_DIR}/short_list ${WORKING_DIR}/to_be_reevaluated_by_codeML ${WORKING_DIR}/codeML_random_list ${WORKING_DIR}/codeML_results ${WORKING_DIR}/tree.codeML ${WORKING_DIR}/codeML_short_list ${WORKING_DIR}/negative_list ${WORKING_DIR}/files_requiring_attention ${WORKING_DIR}/FUBAR_short_list ${WORKING_DIR}/renamed_seqs_mappings
 ```
 
 # For Developers

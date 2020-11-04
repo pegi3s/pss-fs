@@ -2,7 +2,7 @@
 
 <pipeline xmlns="http://www.sing-group.org/compi/pipeline-1.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<version>1.5.0-SNAPSHOT</version>
+	<version>1.5.0</version>
 
 	<params>
 		<param name="working_dir" shortName="w" global="true" defaultValue="/working_dir">Path of the working directory.</param>
@@ -23,7 +23,16 @@
 	</params>
 
 	<tasks>
-		<task id="check-file-names">
+		<task id="check-minimum-sequences">
+			${scripts_dir}/check_minimum_sequences ${working_dir} ${input_dir}
+
+			if [ -f ${working_dir}/files_without_minimum_sequences ]; then
+				echo "There are input files without the minimum number of sequences (4). Check the list of files in files_without_minimum_sequences."
+				exit 1
+			fi
+		</task>
+
+		<task id="check-file-names" after="check-minimum-sequences">
 			${scripts_dir}/check ${working_dir}/${input_dir}
 		</task>
 
@@ -123,6 +132,7 @@
 		</task>
 	</tasks>
 	<metadata>
+		<task-description id="check-minimum-sequences">Checks that all input files have the minimum number of sequences (4). If so, such files are reported in the files_without_minimum_sequences and the pipeline execution is stopped.</task-description>
 		<task-description id="check-file-names">Checks the input file names.</task-description>
 		<task-description id="rename-headers">Renames the sequence headers.</task-description>
 		<task-description id="clustal-omega">Aligns sequences using ClustalOmega.</task-description>

@@ -63,6 +63,8 @@ ADD image-files/compi.tar.gz /
 COPY ./resources/scripts/* /opt/Fast_Screen/
 COPY ./resources/config /home/config
 
+RUN chmod u+x /opt/Fast_Screen/*
+
 # ADD PIPELINE
 ADD pipeline.xml /pipeline.xml
 ENTRYPOINT ["/compi", "run",  "-p", "/pipeline.xml"]

@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# Check that the input files have the minimum number of sequences (4) to be analyzed
+# [parameters] workingpath inputfilesdir
+
+rm -f $1/files_without_minimum_sequences
+
+for file in $(ls -A $1/$2); do
+	COUNT_SEQS=$(grep '>' $1/$2/$file | wc -l);
+	if [ $COUNT_SEQS -lt 4 ]; then
+		echo $file >> $1/files_without_minimum_sequences
+	fi
+done
