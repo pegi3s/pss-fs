@@ -3,8 +3,12 @@
 #prepare trees for codeML
 # [parameters] file tree_dir workingpath
 
-cp -r $3/$2/$1.tre $3/$2.codeML/$1
-cd $3/$2.codeML
+TMP_DIR=$(mktemp -d /tmp/prepare-tree-$1.XXXX)
+
+cd ${TMP_DIR}
+
+cp $3/$2/$1.tre ${TMP_DIR}/$1
+
 sed -i "s/:/\n:/g" $1
 sed -i "s/,/\n,/g" $1
 sed -i "/:/ s/.*).*/)/g" $1
@@ -13,3 +17,9 @@ tr "\n" " " < $1 > $1.1
 sed -i "s/ //g" $1.1
 sed "s/)$/);/" $1.1 > $1.tre
 touch $1.1 $1 && rm $1.1 $1
+
+cp $1.tre $3/$2.codeML/$1.tre
+
+cd $3
+
+rm -rf ${TMP_DIR}
