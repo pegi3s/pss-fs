@@ -38,6 +38,8 @@ echo "fix_blength = 0" >> $7/$3/$4/$1
 
 #running codeML
 
-codeml $7/$3/$4/$1
+cd $7/$3/$4
+
+codeml $1
 
 
