@@ -2,7 +2,7 @@
 
 <pipeline xmlns="http://www.sing-group.org/compi/pipeline-1.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<version>1.7.1</version>
+	<version>1.8.0</version>
 
 	<params>
 		<param name="working_dir" shortName="w" global="true" defaultValue="/working_dir">Path of the working directory.</param>
@@ -32,11 +32,7 @@
 			fi
 		</task>
 
-		<task id="check-file-names" after="check-minimum-sequences">
-			${scripts_dir}/check ${working_dir}/${input_dir}
-		</task>
-
-		<foreach id="rename-headers" after="check-file-names"
+		<foreach id="rename-headers" after="check-minimum-sequences"
 			params="input_dir renamed_seqs_dir renamed_seqs_maps_dir"
 			of="command" in="ls ${working_dir}/${input_dir}" as="input_fasta">
 			mkdir -p ${working_dir}/${renamed_seqs_dir}
@@ -133,7 +129,6 @@
 	</tasks>
 	<metadata>
 		<task-description id="check-minimum-sequences">Checks that all input files have the minimum number of sequences (4). If so, such files are reported in the files_without_minimum_sequences and the pipeline execution is stopped.</task-description>
-		<task-description id="check-file-names">Checks the input file names.</task-description>
 		<task-description id="rename-headers">Renames the sequence headers.</task-description>
 		<task-description id="clustal-omega">Aligns sequences using ClustalOmega.</task-description>
 		<task-description id="fastree">Generates a phylogenetic tree using FastTree.</task-description>
