@@ -42,4 +42,6 @@ cd $7/$3/$4
 
 codeml $1
 
-
+if [ $? -eq 1 ]; then
+    echo $1 >> $7/files_requiring_attention
+fi
