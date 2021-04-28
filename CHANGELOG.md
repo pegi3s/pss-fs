@@ -1,5 +1,29 @@
 # Changelog
 
+## [1.10.0] - 2021-04-28
+
+### Changed
+
+- Update Compi version to 1.4.0.
+
+## [1.9.0] - 2020-12-21
+
+### Changed
+
+- Add files that fail to be analized in codeML to the `files_requiring_attention` list.
+
+## [1.8.0] - 2020-12-10
+
+### Changed
+
+- Remove the `check-file-names` task.
+
+## [1.7.1] - 2020-12-07
+
+### Fixed
+
+- Fix a bug when running codeML with long file names.
+
 ## [1.7.0] - 2020-11-08
 
 ### Changed
