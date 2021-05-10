@@ -29,6 +29,11 @@ In these commands, you should replace:
 To re-run the pipeline in the same working directory, run the following command first in order to clean it:
 
 ```bash
+docker run -v ${WORKING_DIR}:/working_dir --entrypoint clean_working_dir pegi3s/pss-fs /working_dir/
+```
+
+Or, alternatively, delete every folder manually:
+```bash
 sudo rm -rf ${WORKING_DIR}/ali ${WORKING_DIR}/renamed_seqs ${WORKING_DIR}/logs ${WORKING_DIR}/tree ${WORKING_DIR}/FUBAR_files ${WORKING_DIR}/FUBAR_results ${WORKING_DIR}/short_list ${WORKING_DIR}/to_be_reevaluated_by_codeML ${WORKING_DIR}/codeML_random_list ${WORKING_DIR}/codeML_results ${WORKING_DIR}/tree.codeML ${WORKING_DIR}/codeML_short_list ${WORKING_DIR}/negative_list ${WORKING_DIR}/files_requiring_attention ${WORKING_DIR}/FUBAR_short_list ${WORKING_DIR}/renamed_seqs_mappings
 ```
 

@@ -65,6 +65,8 @@ COPY ./resources/config /home/config
 
 RUN chmod u+x /opt/Fast_Screen/*
 
+RUN ln -s /opt/Fast_Screen/clean_working_dir /usr/bin/clean_working_dir
+
 # ADD PIPELINE
 ADD pipeline.xml /pipeline.xml
 ENTRYPOINT ["/compi", "run",  "-p", "/pipeline.xml"]
