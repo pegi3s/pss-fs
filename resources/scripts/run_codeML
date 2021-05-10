@@ -1,46 +1,54 @@
-#!/bin/sh
+#!/bin/bash
 
-#run codeML
+# run codeML
 # [parameters] file 2 codeML_results_dir codeML_config_files_dir aligned_seqs_dir tree_dir workingpath
 
-#preparing codeML control file
+# preparing codeML control file
 
-echo "seqfile = "$7"/"$5"/"$1 > $7/$3/$4/$1
-echo "treefile = "$7"/"$6.codeML"/"$1.tre >> $7/$3/$4/$1
-echo "outfile = "$7"/"$3"/"$1.codeml.out >> $7/$3/$4/$1
+FILENAME=${1:0:15}
 
-echo "noisy = 3" >> $7/$3/$4/$1
-echo "verbose = 0" >> $7/$3/$4/$1
-echo "runmode = 0" >> $7/$3/$4/$1
+CODEML_CTL_FILE=$(mktemp -p $7/$3/$4 ${FILENAME}.XXXXXX)
 
-echo "seqtype = 1" >> $7/$3/$4/$1
-echo "CodonFreq = 2" >> $7/$3/$4/$1
-echo "clock = 0" >> $7/$3/$4/$1
-echo "aaDist = 0" >> $7/$3/$4/$1
-echo "model = 0" >> $7/$3/$4/$1
+echo "seqfile = "$7"/"$5"/"$1 > ${CODEML_CTL_FILE}
+echo "treefile = "$7"/"$6.codeML"/"$1.tre >> ${CODEML_CTL_FILE}
+echo "outfile = "$7"/"$3"/"$1.codeml.out >> ${CODEML_CTL_FILE}
 
-echo "NSsites = "$2 >> $7/$3/$4/$1
-echo "icode = 0" >> $7/$3/$4/$1
-echo "Mgene = 0" >> $7/$3/$4/$1
+echo "noisy = 3" >> ${CODEML_CTL_FILE}
+echo "verbose = 0" >> ${CODEML_CTL_FILE}
+echo "runmode = 0" >> ${CODEML_CTL_FILE}
 
-echo "fix_kappa = 0" >> $7/$3/$4/$1
-echo "kappa = .3" >> $7/$3/$4/$1
-echo "fix_omega = 0" >> $7/$3/$4/$1
-echo "omega = 1.3" >> $7/$3/$4/$1
-echo "ncatG = 10" >> $7/$3/$4/$1
+echo "seqtype = 1" >> ${CODEML_CTL_FILE}
+echo "CodonFreq = 2" >> ${CODEML_CTL_FILE}
+echo "clock = 0" >> ${CODEML_CTL_FILE}
+echo "aaDist = 0" >> ${CODEML_CTL_FILE}
+echo "model = 0" >> ${CODEML_CTL_FILE}
 
-echo "getSE = 0" >> $7/$3/$4/$1
-echo "RateAncestor = 0" >> $7/$3/$4/$1
+echo "NSsites = "$2 >> ${CODEML_CTL_FILE}
+echo "icode = 0" >> ${CODEML_CTL_FILE}
+echo "Mgene = 0" >> ${CODEML_CTL_FILE}
 
-echo "Small_Diff = .45e-6" >> $7/$3/$4/$1
-echo "cleandata = 1" >> $7/$3/$4/$1
-echo "fix_blength = 0" >> $7/$3/$4/$1
+echo "fix_kappa = 0" >> ${CODEML_CTL_FILE}
+echo "kappa = .3" >> ${CODEML_CTL_FILE}
+echo "fix_omega = 0" >> ${CODEML_CTL_FILE}
+echo "omega = 1.3" >> ${CODEML_CTL_FILE}
+echo "ncatG = 10" >> ${CODEML_CTL_FILE}
+
+echo "getSE = 0" >> ${CODEML_CTL_FILE}
+echo "RateAncestor = 0" >> ${CODEML_CTL_FILE}
+
+echo "Small_Diff = .45e-6" >> ${CODEML_CTL_FILE}
+echo "cleandata = 1" >> ${CODEML_CTL_FILE}
+echo "fix_blength = 0" >> ${CODEML_CTL_FILE}
 
 #running codeML
 
 cd $7/$3/$4
 
-codeml $1
+WORKING_DIR=$(mktemp -d /tmp/${FILENAME}.XXXXXX)
+
+cd ${WORKING_DIR}
+
+codeml ${CODEML_CTL_FILE}
 
 if [ $? -eq 1 ]; then
     echo $1 >> $7/files_requiring_attention
