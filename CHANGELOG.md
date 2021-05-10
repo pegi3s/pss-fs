@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.11.0] - 2021-05-10
+
+### Changed
+
+- Improve the `run_FUBAR` script to run every analysis from a different working directory.
+
+### Fixed
+
+- Fix codeML stopping when analyzing files with long names.
+
+### Added
+
+- `clean_working_dir` script to clean the working directory.
+
 ## [1.10.0] - 2021-04-28
 
 ### Changed
