@@ -1,20 +1,27 @@
 #!/bin/sh
 
-#run FUBAR
+# run FUBAR
 # [parameters] file FUBAR_files_dir FUBAR_config_files_dir FUBAR_results_dir workingpath
+
+mkdir -p $5/$2/$3/$1
 
 # HYPHY settings
 
-echo "1" > $5/$2/$3/$1
-echo "4" >> $5/$2/$3/$1
-echo "1" >> $5/$2/$3/$1
-echo $5/$2/$1 >> $5/$2/$3/$1
-echo "Y" >> $5/$2/$3/$1
-echo "20" >> $5/$2/$3/$1
-echo "3" >> $5/$2/$3/$1
-echo "0.5" >> $5/$2/$3/$1
+HYPHY_SETTINGS_FILE=$5/$2/$3/$1/$1
+
+echo "1" > ${HYPHY_SETTINGS_FILE}
+echo "4" >> ${HYPHY_SETTINGS_FILE}
+echo "1" >> ${HYPHY_SETTINGS_FILE}
+echo $5/$2/$1 >> ${HYPHY_SETTINGS_FILE}
+echo "Y" >> ${HYPHY_SETTINGS_FILE}
+echo "20" >> ${HYPHY_SETTINGS_FILE}
+echo "3" >> ${HYPHY_SETTINGS_FILE}
+echo "0.5" >> ${HYPHY_SETTINGS_FILE}
 
 # Run FUBAR
 
-cat $5/$2/$3/$1 | HYPHYMP > $5/$4/$1
-touch $5/$2/$1.fubar.cache $5/$2/$1.FUBAR.json && rm $5/$2/$1.fubar.cache $5/$2/$1.FUBAR.json
+cd $5/$2/$3/$1
+
+cat ${HYPHY_SETTINGS_FILE} | HYPHYMP > $5/$4/$1
+
+rm -f $5/$2/$1.fubar.cache $5/$2/$1.FUBAR.json
