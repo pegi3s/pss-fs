@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.11.1] - 2022-09-01
+
+### Fixed
+
+- Makes `run_FUBAR` script fail when the `errors.log` file is produced by FUBAR. This way the pipeline task fails and tasks depending on it are aborted by Compi.
+
 ## [1.11.0] - 2021-05-10
 
 ### Changed

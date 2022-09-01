@@ -25,3 +25,9 @@ cd $5/$2/$3/$1
 cat ${HYPHY_SETTINGS_FILE} | HYPHYMP > $5/$4/$1
 
 rm -f $5/$2/$1.fubar.cache $5/$2/$1.FUBAR.json
+
+if [ -f "errors.log" ]; then
+    echo -e "\nError in fubar-run, showing errors.log:\n"
+    cat errors.log
+    exit 1
+fi
