@@ -8,6 +8,7 @@ Test data for the pipeline. Look at the instructions in the README section to se
 
 ## Compatible versions
 
+- 1.12.0
 - 1.11.1
 - 1.11.0
 - 1.10.0

@@ -1,10 +1,16 @@
 # Changelog
 
+## [1.12.0] - 2022-09-02
+
+### Changed
+
+- Change the `run_clustal_omega` script to perform alignment at amino acid level. This change is motivated by the fact that sometimes the nucleic acid alignment produces sequences containing stop codons which are not valid for subsequent anaylsis steps.
+
 ## [1.11.1] - 2022-09-01
 
 ### Fixed
 
-- Makes `run_FUBAR` script fail when the `errors.log` file is produced by FUBAR. This way the pipeline task fails and tasks depending on it are aborted by Compi.
+- Make `run_FUBAR` script fail when the `errors.log` file is produced by FUBAR. This way the pipeline task fails and tasks depending on it are aborted by Compi.
 
 ## [1.11.0] - 2021-05-10
 

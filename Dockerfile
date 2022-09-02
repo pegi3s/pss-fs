@@ -43,11 +43,24 @@ RUN apt-get install -y gcc \
     && cp baseml basemlg chi2 codeml evolver infinitesites mcmctree pamp yn00 /usr/local/bin/ \
     && cd /usr/local \
     && rm -rf /usr/local/paml4.9j \
-    && apt-get remove -y wget gcc make \
+    && apt-get remove -y gcc make \
     && apt-get autoremove -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && mkdir /codeml
+
+# install EMBOSS
+
+RUN apt-get -qq update && apt-get -y upgrade && \
+	apt-get install -y emboss=6.6.0+dfsg-6build1
+
+# install translatorX
+
+RUN apt-get -qq update && apt-get -y upgrade && \
+	apt-get install -y perl
+
+RUN wget http://evolution6.i3s.up.pt/static/pegi3s/dockerfiles/translatorx/translatorx_vLocal.pl -O /usr/local/bin/translatorx_vLocal.pl && \
+	chmod u+x /usr/local/bin/translatorx_vLocal.pl
 
 RUN apt-get update && apt-get install -y bc
 

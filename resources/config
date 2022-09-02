@@ -25,6 +25,3 @@ FUBAR_results_dir=FUBAR_results
 #run_codeML module
 codeML_results_dir=codeML_results
 codeML_config_files_dir=config_files
-
-
-

@@ -1,6 +1,20 @@
 #!/bin/sh
 
-# align sequences using clustal_omega
+# align sequences at protein level using clustal_omega
 # [parameters] file renamed_seqs_dir aligned_seqs_dir workingpath
 
-clustalo --force -i $4/$2/$1 -o $4/$3/$1
+TEMP_DIR=$(mktemp -d /tmp/pss-fs-protein_alignment.XXXXXXX)
+
+INPUT_NUC="$4/$2/$1"
+
+transeq -sequence ${INPUT_NUC} -outseq ${TEMP_DIR}/2_prot_output.fas -frame 1
+
+sed -i -e ''s/_1$// ${TEMP_DIR}/2_prot_output.fas
+
+clustalo -i ${TEMP_DIR}/2_prot_output.fas -o ${TEMP_DIR}/3_prot_output_aligned.fas
+
+translatorx_vLocal.pl -i ${INPUT_NUC} -a ${TEMP_DIR}/3_prot_output_aligned.fas -o ${TEMP_DIR}/4_corresponding_output
+
+cp ${TEMP_DIR}/4_corresponding_output.nt_ali.fasta $4/$3/$1
+
+rm -rf ${TEMP_DIR}
